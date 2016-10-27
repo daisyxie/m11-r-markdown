@@ -3,7 +3,7 @@ output: html_document
 ---
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo= TRUE, message=FALSE}
 ### Exercise 1 ###
 
 library(jsonlite)
@@ -13,7 +13,19 @@ library(dplyr)
 
 # Write a function that allows you to specify a movie, then does the following:
 GetReview <- function(movie) {
+    no.spaces <- gsub(" ", "+", movie)
+  base <- c('https://api.nytimes.com/svc/movies/v2/reviews/search.json?')
+  api.key <- '&api-key=92d8678280434732b5231a4c037f59c6'
+  request <- paste0(base, "query=", no.spaces, api.key)
+  movie.review <- fromJSON (request)
+  flattened <- flatten(movie.review$results)
   
+  recent.review <- flattened[1,]
+  headline <- recent.review$headline
+  summary <- recent.review$summary_short
+  link <- recent.review$link.url
+  info <- list(headline = headline, summary = summary, link = link)
+  return (info)
   # Replace all of the spaces in your movie title with plus signs (+)
   
   
@@ -37,5 +49,13 @@ GetReview <- function(movie) {
 }
 
 # Create a variable called `movie.info` by passing your movie to your GetReview function
-
+movie.info <- GetReview('Forrest Gump')
 ```
+
+This is so exciting. R is letting me make a website. WHOO.
+
+# `r movie`
+## `r movie.info$deadline`
+Below is the summary about `r movie` from the New York Times API
+> `r movie.info$summary`
+
